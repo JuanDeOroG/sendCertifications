@@ -4,25 +4,30 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "seed": "npx prisma-seeder -f prisma/seeder.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "dependencies": {
-    "@prisma/client": "^7.2.0", 
+    "@prisma/client": "^5.15.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
-    "helmet": "^8.1.0", 
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
-    "prisma": "^7.2.0",
-    "winston": "^3.19.0", 
+    "prisma": "^5.15.0",
+    "winston": "^3.19.0",
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "dotenv": "^17.2.3",
+    "nodemon": "^3.1.11",
+    "prisma-seeder": "^1.0.2",
+    "tsx": "^4.21.0"
   }
 }
