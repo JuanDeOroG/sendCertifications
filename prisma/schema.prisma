@@ -16,6 +16,6 @@ model user {
   username       String   @db.VarChar(55)
   remember_token String   @unique(map: "User_remember_token_key") @db.VarChar(55)
   createdAt      DateTime @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime @updatedAt
   state          Int      @default(1)
 }
