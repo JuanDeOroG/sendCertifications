@@ -5,6 +5,7 @@ const logger = require('./config/logger');
 require('dotenv').config();
 
 const authRoutes = require('./modules/auth/auth.routes');
+const userRoutes = require('./modules/user/user.routes')
 
 const app = express();
 
@@ -22,10 +23,11 @@ app.use((req, res, next) => {
 
 // Rutas
 app.use('/api/auth', authRoutes);
+app.use('/user', userRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
 	res.json({ message: 'API funcionando' });
 });
 
-module.exports = app;
+module.exports = app

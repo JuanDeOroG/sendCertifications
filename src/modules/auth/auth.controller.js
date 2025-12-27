@@ -4,7 +4,6 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-// Cambia esta clave por una segura y guárdala en .env
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Registro de usuario
@@ -23,7 +22,7 @@ async function register(req, res) {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const code = Math.random().toString(36).slice(2, 10);
-        const remeberToken = Math.random().toString(36).slice(2, 10);
+        const rememberToken = Math.random().toString(36).slice(2, 10);
 
         // Crear usuario
         const user = await prisma.user.create({
@@ -32,12 +31,12 @@ async function register(req, res) {
                 password: hashedPassword,
                 username,
                 code,
-                remember_token: remeberToken,
+                remember_token: rememberToken,
                 state: 1,
             },
         });
 
-        return res.status(201).json({ message: 'Usuario registrado', user: { id: user.id, email: user.email, username: user.username, code: user.code } });
+        return res.status(201).json({ message: 'Usuario registrado', user: { email: user.email, username: user.username, code: user.code } });
     } catch (error) {
         return res.status(500).json({ message: 'Error en el registro', error: error.message });
     }
