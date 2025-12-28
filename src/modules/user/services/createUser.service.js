@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 
 async function create(data){
 
-    validations = await databaseValidations(data);
+    const validations = await databaseValidations(data);
 
     if(!validations.valid){
         return validations;
@@ -37,7 +37,6 @@ async function databaseValidations(data) {
   if (emailExist) {
     return { valid: false, message: "El email ya existe. Por favor, usa otro." };
   }
-  // Aquí podrías agregar más validaciones y mensajes
   return { valid: true };
 }
 
