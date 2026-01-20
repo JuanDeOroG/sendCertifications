@@ -137,4 +137,4 @@ dist
 
 /src/generated/prisma
 
-scripts/ms-playwright/
+scripts/ms-playwright/chromium-1181
