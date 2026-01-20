@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const authRoutes = require('./modules/auth/auth.routes');
 const userRoutes = require('./modules/user/user.routes')
-
+const downloadCertificationRoutes = require('./modules/certification/certification.routes')
 const app = express();
 
 // Middlewares globales
@@ -24,6 +24,8 @@ app.use((req, res, next) => {
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/user', userRoutes);
+app.use('/certification', downloadCertificationRoutes)
+
 
 // Ruta ping
 app.get('/', (req, res) => {

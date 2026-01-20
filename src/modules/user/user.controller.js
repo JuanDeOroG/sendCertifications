@@ -1,6 +1,3 @@
-const bcrypt = require("bcrypt");
-const validate = require("../../middlewares/validate");
-const { empty } = require("@prisma/client/runtime/library");
 const createUserService = require("./services/createUser.service");
 const updateUserService = require("./services/updateUser.service");
 

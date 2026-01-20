@@ -35,6 +35,12 @@ async function downloadCertificates(page, sedeSalon) {
   // obtiene todas las filas de la tabla
   const filas = await page.$$('table.user-tables tr');
 
+  // Obtener la fecha y hora actual en formato YYYY-MM-DD_HH-mm-ss
+  const now = new Date();
+  const fecha = now.toISOString().slice(0, 10);
+  const hora = now.toTimeString().slice(0, 8).replace(/:/g, '-');
+  const fechaHoraActual = `${fecha}_${hora}`;
+
   for (const fila of filas) {
     // busca el botón "Descargar Certificado" en la fila
     const botonDescargar = await fila.$('button:has-text("Descargar Certificado")');
@@ -43,8 +49,8 @@ async function downloadCertificates(page, sedeSalon) {
       const correoTd = await fila.$('td:nth-child(3)');
       const correo = await correoTd.innerText();
 
-      // crea la carpeta con sede-salon y correo
-      const carpetaDestino = path.join(__dirname, 'certificates', sedeSalon, correo);
+      // crea la carpeta con sede-salon, fecha y hora, y correo
+      const carpetaDestino = path.join(__dirname, 'certificates', `${sedeSalon}_${fechaHoraActual}`, correo);
       if (!fs.existsSync(carpetaDestino)) {
         fs.mkdirSync(carpetaDestino, { recursive: true });
       }
@@ -74,14 +80,15 @@ async function downloadCertificates(page, sedeSalon) {
   console.log('Descarga de certificados finalizada');
 }
 
-(async () => {
+
+async function execute(user, password, classroom) {
   const browser = await chromium.launch({
     executablePath: path.join(__dirname, 'ms-playwright', 'chromium-1181', 'chrome.exe'),
-    headless: false // esto abre el navegador en modo visible
+    headless: true // visible -> false --- No visible -> true
   });
   const page = await browser.newPage();
 
-  await login(page, '1044638320', '1044638320');
+  await login(page, user, password);
 
   await page.waitForSelector('table.user-tables');
 
@@ -89,35 +96,35 @@ async function downloadCertificates(page, sedeSalon) {
   const filasActivas = await page.$$('tr:has(td.active)');
 
   if (!filasActivas || filasActivas.length === 0) {
-  console.log('No se encontraron aulas activas.');
-  return;
-}
+    console.log('No se encontraron aulas activas.');
+    await browser.close();
+    return { valid: false, message: 'No se encontraron aulas activas.' };
+  }
 
+  let found = false;
   for (let i = 0; i < filasActivas.length; i++) {
     await page.waitForSelector('table.user-tables');
-
-    // vuelve a obtener las filas activas en cada iteración
     const filasActivasActualizadas = await page.$$('tr:has(td.active)');
     const filaActual = filasActivasActualizadas[i];
-
-    // dentro de la fila activa, busca el botón "Asistencia"
-    const botonAsistencia = await filaActual.$('button:has-text("Asistencia")');
-    if (botonAsistencia) {
-      // obtiene el texto de la columna Sede - Salón (quinta columna)
-      const sedeSalonTd = await filaActual.$('td:nth-child(5)');
-      const sedeSalon = await sedeSalonTd.innerText();
-
-      // haz clic en el botón "Asistencia"
-      await botonAsistencia.click();
-
-      // llama a la función para descargar los certificados y le pasa sedeSalon
-      await downloadCertificates(page, sedeSalon);
-
-      // volver a la tabla, navega de nuevo y espera que cargue
-      await page.goto('https://appbaq.barranquilla.gov.co:8989/centros/');
-      await page.waitForSelector('table.user-tables');
+    const sedeSalonTd = await filaActual.$('td:nth-child(5)');
+    const sedeSalon = await sedeSalonTd.innerText();
+    if (sedeSalon === classroom) {
+      const botonAsistencia = await filaActual.$('button:has-text("Asistencia")');
+      if (botonAsistencia) {
+        await botonAsistencia.click();
+        await downloadCertificates(page, sedeSalon);
+        found = true;
+        break;
+      }
     }
   }
 
-  // await browser.close(); // puedes comentar esto para ver el resultado
-})();
+  await browser.close();
+  if (found) {
+    return { valid: true, message: 'Certificados descargados correctamente.' };
+  } else {
+    return { valid: false, message: 'No se encontró el aula especificada.' };
+  }
+}
+
+module.exports = { execute };

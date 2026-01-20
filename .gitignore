@@ -138,3 +138,4 @@ dist
 /src/generated/prisma
 
 scripts/ms-playwright/chromium-1181
+scripts/certificates/
