@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/user', userRoutes);
 
-// Ruta de prueba
+// Ruta ping
 app.get('/', (req, res) => {
 	res.json({ message: 'API funcionando' });
 });
