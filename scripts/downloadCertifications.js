@@ -49,8 +49,8 @@ async function downloadCertificates(page, sedeSalon) {
       const correoTd = await fila.$('td:nth-child(3)');
       const correo = await correoTd.innerText();
 
-      // crea la carpeta con sede-salon, fecha y hora, y correo
-      const carpetaDestino = path.join(__dirname, 'certificates', `${sedeSalon}_${fechaHoraActual}`, correo);
+      // crea la carpeta con sede-salon, fecha y hora, y correo en storage/certificates
+      const carpetaDestino = path.join(__dirname, '..', 'storage', 'certificates', `${sedeSalon}_${fechaHoraActual}`, correo);
       if (!fs.existsSync(carpetaDestino)) {
         fs.mkdirSync(carpetaDestino, { recursive: true });
       }
