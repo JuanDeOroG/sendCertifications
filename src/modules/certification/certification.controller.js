@@ -20,4 +20,18 @@ async function downloadCertifications(req, res){
     }
 }
 
-module.exports = {downloadCertifications}
+
+const ListCertificationService = require("./services/listCertificates.service");
+
+function index(req, res) {
+    try {
+        // Pasar el id del usuario autenticado a la función de servicio
+        const userId = req.user && req.user.userId ? req.user.userId : null;
+        const folders = ListCertificationService.listCertificateFolders(userId);
+        return res.status(200).json(folders);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error al listar carpetas', error: error.message });
+    }
+}
+
+module.exports = {downloadCertifications, index}
