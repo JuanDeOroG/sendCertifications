@@ -89,6 +89,9 @@ async function execute(user, password, classroom) {
   const page = await browser.newPage();
 
   await login(page, user, password);
+  // ir al módulo "Mis Cursos" después del login
+  await page.waitForSelector('a:has-text("Mis Cursos")');
+  await page.click('a:has-text("Mis Cursos")');
 
   await page.waitForSelector('table.user-tables');
 
@@ -104,6 +107,9 @@ async function execute(user, password, classroom) {
   let found = false;
   for (let i = 0; i < filasActivas.length; i++) {
     await page.waitForSelector('table.user-tables');
+    // ir al módulo "Mis Cursos" después del login
+    await page.waitForSelector('a:has-text("Mis Cursos")');
+    await page.click('a:has-text("Mis Cursos")');
     const filasActivasActualizadas = await page.$$('tr:has(td.active)');
     const filaActual = filasActivasActualizadas[i];
     const sedeSalonTd = await filaActual.$('td:nth-child(5)');
